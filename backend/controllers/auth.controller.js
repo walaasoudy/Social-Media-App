@@ -22,6 +22,10 @@ export const signup = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Email already exists");
   }
+  if(password.length < 6){
+  res.return(400);
+  throw new Error("Password must be at least 6 char");
+  }
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
   
@@ -42,6 +46,22 @@ export const signup = asyncHandler(async (req, res) => {
 
 export const login = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
+  const user = await User.findOne({username});
+  const isPasswordCorrect = await bcrypt.compare(password,user.password)
+  if (!isPasswordCorrect) {
+    res.status(400);
+    throw new Error("Invalid password");
+  }
+  generateTokenAndSetCookie(user._id, res);
+    res.status(200).json({
+    message: "Login successful",
+    user: {
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+    },
+  });
+
 });
 
 export const logout = asyncHandler(async (req, res) => {
