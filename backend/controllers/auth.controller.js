@@ -65,5 +65,11 @@ export const login = asyncHandler(async (req, res) => {
 });
 
 export const logout = asyncHandler(async (req, res) => {
-  res.json({ data: "you hit the logout endpoint" });
+  res.cookie("token", "", {
+    httpOnly: true,
+    expires: new Date(0), // تمسح الكوكي فوراً
+  });
+
+  res.status(200).json({ message: "Logged out successfully" });
 });
+
