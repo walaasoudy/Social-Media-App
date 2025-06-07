@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/user.model.js"; // adjust path if needed
 import bcrypt from "bcryptjs";
+import { generateTokenAndSetCookie } from "../lib/utils/generateToken.js";
 export const signup = asyncHandler(async (req, res) => {
   const { username, fullname, email, password } = req.body;
 
@@ -33,8 +34,8 @@ export const signup = asyncHandler(async (req, res) => {
     password: hashedPassword, // Store the hashed password
   });
   if(user){
-  generateTokenAndSetCookie(user,_id.res)
-  await user.save();
+    generateTokenAndSetCookie(user._id, res);
+    await user.save();
   }
   res.status(201).json({ message: "User registered successfully", user });
 });
