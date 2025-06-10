@@ -7,6 +7,7 @@ import connectiondb from './db/db.js'
 import authRoutes from "./routes/auth.routes.js"
 import postsRoutes from './routes/post.route.js'
 import notificationRoutes from './routes/notification.route.js'
+import userRoute from './routes/user.route.js'
 dotenv.config()
 app.use(express.json())
 app.use(cookieParser()); 
@@ -20,6 +21,8 @@ const port = process.env.PORT || 8000
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postsRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/user",userRoute);
+
 
 app.listen(port, () => {
   console.log(`server is running on ${port} `);
