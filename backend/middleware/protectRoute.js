@@ -21,7 +21,6 @@ export const protectedRoute = asyncHandler(async (req, res, next) => {
     res.status(404);
     throw new Error("User not found");
   }
-console.log("tttttttttttttttt")
   req.user = user;
   next();
 });
