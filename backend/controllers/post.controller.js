@@ -144,5 +144,96 @@ const posts = await Post.find()
     res.status(200);
     throw new Error("No posts found");
   }
-  return res.status(200).json({ message: "data: ", posts });
+  return res.status(200).json({
+    message: "Posts fetched successfully",
+    count: posts.length,
+    posts,
+  });
+  
 })
+
+
+export const getLikedPosts = asyncHandler(async (req, res) => {
+  const userId = req.params.id;
+
+  const user = await User.findById(userId);
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  const likedPosts = await Post.find({ _id: { $in: user.likedPosts } })
+    .populate({
+      path: "user",
+      select: "-password",
+    })
+    .populate({
+      path: "comments.user",
+      select: "-password",
+    });
+    return res.status(200).json({
+      message: "likedPosts fetched successfully",
+      count: likedPosts.length,
+      likedPosts,
+    });
+   
+});
+
+
+export const getFollowingPosts = asyncHandler(async (req, res) => {
+  // *** CRITICAL FIX: The userId for 'following' comes from the authenticated user (req.user),
+  // as the /following route does not have an ID parameter. ***
+  const userId = req.user._id;
+
+  const user = await User.findById(userId);
+  if (!user) {
+    // This specific error indicates an issue with the authenticated user's ID
+    // which shouldn't happen if `protectedRoute` is working correctly.
+    res.status(404); // Using 404 as the user was expected to be found
+    throw new Error("Authenticated user not found");
+  }
+
+  const following = user.following;
+  const feedPosts = await Post.find({ user: { $in: following } })
+    .sort({ createdAt: -1 })
+    .populate({
+      path: "user",
+      select: "-password",
+    })
+    .populate({
+      path: "comments.user",
+      select: "-password",
+    });
+  return res.status(200).json({
+    message: "Following posts fetched successfully",
+    count: feedPosts.length,
+    feedPosts,
+  });
+});
+export const getUserPosts = asyncHandler(async (req, res) => {
+  // *** تصحيح هنا: استخدام req.params.username ***
+  const username = req.params.username;
+
+  // البحث عن المستخدم بالـ username
+  const user = await User.findOne({ username });
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  const posts = await Post.find({ user: user._id }) // الآن نستخدم user._id للبحث عن البوستات
+    .sort({ createdAt: -1 })
+    .populate({
+      path: "user",
+      select: "-password",
+    })
+    .populate({
+      path: "comments.user",
+      select: "-password",
+    });
+  return res.status(200).json({
+    message: "User posts fetched successfully",
+    count: posts.length,
+    posts,
+  });
+});
