@@ -6,7 +6,7 @@ import dotenv from 'dotenv'
 import connectiondb from './db/db.js'
 import authRoutes from "./routes/auth.routes.js"
 import postsRoutes from './routes/post.route.js'
-
+import notificationRoutes from './routes/notification.route.js'
 dotenv.config()
 app.use(express.json())
 app.use(cookieParser()); 
@@ -19,7 +19,8 @@ connectiondb()
 const port = process.env.PORT || 8000
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postsRoutes);
-console.log(process.env.MONGO_URL);
+app.use("/api/notifications", notificationRoutes);
+
 app.listen(port, () => {
   console.log(`server is running on ${port} `);
   

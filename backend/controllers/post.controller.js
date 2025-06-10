@@ -152,7 +152,6 @@ const posts = await Post.find()
   
 })
 
-
 export const getLikedPosts = asyncHandler(async (req, res) => {
   const userId = req.params.id;
 
@@ -181,15 +180,11 @@ export const getLikedPosts = asyncHandler(async (req, res) => {
 
 
 export const getFollowingPosts = asyncHandler(async (req, res) => {
-  // *** CRITICAL FIX: The userId for 'following' comes from the authenticated user (req.user),
-  // as the /following route does not have an ID parameter. ***
   const userId = req.user._id;
 
   const user = await User.findById(userId);
   if (!user) {
-    // This specific error indicates an issue with the authenticated user's ID
-    // which shouldn't happen if `protectedRoute` is working correctly.
-    res.status(404); // Using 404 as the user was expected to be found
+    res.status(404); 
     throw new Error("Authenticated user not found");
   }
 
@@ -210,18 +205,16 @@ export const getFollowingPosts = asyncHandler(async (req, res) => {
     feedPosts,
   });
 });
-export const getUserPosts = asyncHandler(async (req, res) => {
-  // *** تصحيح هنا: استخدام req.params.username ***
-  const username = req.params.username;
 
-  // البحث عن المستخدم بالـ username
+export const getUserPosts = asyncHandler(async (req, res) => {
+  const username = req.params.username;
   const user = await User.findOne({ username });
   if (!user) {
     res.status(404);
     throw new Error("User not found");
   }
 
-  const posts = await Post.find({ user: user._id }) // الآن نستخدم user._id للبحث عن البوستات
+  const posts = await Post.find({ user: user._id }) 
     .sort({ createdAt: -1 })
     .populate({
       path: "user",
