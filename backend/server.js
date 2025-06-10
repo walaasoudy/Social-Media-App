@@ -11,6 +11,10 @@ import userRoute from './routes/user.route.js'
 dotenv.config()
 app.use(express.json())
 app.use(cookieParser()); 
+import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+import swaggerOptions from './swagger.js'; 
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -18,6 +22,11 @@ cloudinary.config({
 });
 connectiondb()
 const port = process.env.PORT || 8000
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// You can now access your API docs at http://localhost:8000/api-docs
+
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postsRoutes);
 app.use("/api/notifications", notificationRoutes);
