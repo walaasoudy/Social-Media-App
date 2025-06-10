@@ -10,9 +10,9 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    password:{
-    type : String,
-    required:true,
+    password: {
+      type: String,
+      required: true,
     },
     email: {
       type: String,
@@ -20,29 +20,35 @@ const userSchema = new mongoose.Schema(
       unique: true,
     },
     followers: {
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: "User",
-        default: [],
-      },
-      following:{
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: "User",
-        default: [],
-        },
-  profileImg: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "User",
+      default: [],
+    },
+    following: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "User",
+      default: [],
+    },
+    profileImg: {
       type: String,
       default: "",
     },
     coverImg: {
       type: String,
-        default: "",
+      default: "",
     },
     bio: {
       type: String,
       default: "",
-    }
-  
-},
+    },
+    likedPosts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post",
+        default: [],
+      },
+    ],
+  },
   { timestamps: true }
 );
 
